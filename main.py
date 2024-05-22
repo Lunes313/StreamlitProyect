@@ -15,7 +15,5 @@ def main():
         contrasena = generar_contrasena()
         st.write(contrasena)
 
-
-
 if __name__ == '__main__':
     main()

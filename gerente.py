@@ -1,17 +1,32 @@
-#Gerente-->Manipulacion de datos de empleados
-#Manipulacion de datos: -->Agregar empleados
-                        #-->Consultar empleados -->Eliminar empleados o Modificar empleados
-#Base de datos: username, password, key, IP, level, Code
-
+#Gerente
 import streamlit as st
 import mysql.connector
-from database import create_connection, close_connection, select_user, create_user, select_users
+from database import create_connection, select_user, create_user, select_users
 import random
+import string
+from cryptography.fernet import Fernet
 
+def generar_contrasena():
+    caracteres = string.ascii_letters + string.digits + string.punctuation
+    contrasena = []
+    for i in range(25):
+        contrasena.append(random.choice(caracteres))
+    return ''.join(contrasena)
+
+def cifrar_contrasena(contrasena):
+    key = Fernet.generate_key()
+    cifrador = Fernet(key)
+    contrasena_cifrada = cifrador.encrypt(contrasena.encode())
+    return key, contrasena_cifrada
+
+def descifrar_contrasena(key, contrasenaC):
+    cifrado = Fernet(key)
+    contrasenaDesC = cifrado.decrypt(contrasenaC).decode()
+    return contrasenaDesC
 
 def main():
     connection=create_connection()
-    st.title("Bienvenido Gerente,Maria")#Traer nombre de la base de datos
+    st.title("Bienvenido Gerente, Mateo")
     st.sidebar.title("Menu")
     option = st.sidebar.selectbox("Seleccionar Proceso",["Agregar Empleado","Consultar Empleado"])
 

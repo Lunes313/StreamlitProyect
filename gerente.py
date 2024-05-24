@@ -19,6 +19,7 @@ def main():
         st.subheader("Opcion: Agregar Empleado")
         nombre_empleado=st.text_input("Nombre Completo del Empleado: ")
         nivel=st.text_input("Nivel de acceso")
+        correo=st.text_input("Correo de acceso")
         if st.button("Agregar"):
             nombre_empleado = nombre_empleado.split(" ")
             if(len(nombre_empleado)>=4):
@@ -39,7 +40,7 @@ def main():
                 i=i+1
                 result=select_user(connection,username)
             
-            create_user(connection,username,key,nivel,)
+            create_user(connection,username,key,nivel,correo,)
             st.success("Record created successfully")
 
             st.title(username)

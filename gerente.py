@@ -49,43 +49,37 @@ def select_IP(connection, ip):
 
 
 def main():
-   connection = create_connection()
-   st.title("Hola Gerente,Mateo")
-   col1,col3=st.columns(2)
+    connection = create_connection()
+    st.title("Hola Gerente,Mateo")
+    col1,col3=st.columns(2)
 
-   with col1:
-       st.sidebar.title("Tablas De IPS")
-       result=select_IPS(connection)
-       df = pd.DataFrame(result, columns=["IP"])
-       col1, col2= st.columns(2)
-       col1.write("**IP**")
-       col2.write("**Eliminar**")
-       def render_row(row):
+    with col1:
+        st.sidebar.title("Tablas De IPS")
+        result=select_IPS(connection)
+        df = pd.DataFrame(result, columns=["IP"])
+        col1, col2= st.columns(2)
+        col1.write("**IP**")
+        col2.write("**Eliminar**")
+        def render_row(row):
             col1, col2= st.columns(2)
             col1.write(row["IP"])
             
             if col2.button("Eliminar", key=f"del_{row['IP']}"):
                 eliminar_usuario(connection, row["IP"])
                 st.experimental_rerun()
-       df.apply(render_row, axis=1)
+        df.apply(render_row, axis=1)
 
-   with col3:
-       ips=get_network_name()
-       st.write("La IP que se tome de tu dispositivo es: "+ips)
+    with col3:
+        ips=get_network_name()
+        st.write("La IP que se tome de tu dispositivo es: "+ips)
     
-       if st.button("Agregar"):
-           result=select_IP(connection,ips)
-           if result:
-               st.error("La IP ya se encuentra registrada")
-           else:
-               st.write(created_IPS(connection,ips))
-               st.success("La IP se ha agregado exitosamente")
- 
-
-       
-       
-
-
+        if st.button("Agregar"):
+            result=select_IP(connection,ips)
+            if result:
+                st.error("La IP ya se encuentra registrada")
+            else:
+                st.write(created_IPS(connection,ips))
+                st.success("La IP se ha agregado exitosamente")
 
 if __name__ == '__main__':
     main()

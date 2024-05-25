@@ -10,6 +10,17 @@ def eliminar_usuario(connection, username):
     cursor.execute(sql, val)
     connection.commit()
 
+def definir_nivel(nivel):
+    if nivel == "Acceso Bajo":
+        level = 0
+    elif nivel == "Acceso Medio":
+        level = 1
+    elif nivel == "Acceso Alto":
+        level = 3
+    else:
+        st.error("Nivel de acceso no valido")
+    return level
+
 def main():
     connection = create_connection()
     st.title("Bienvenido Gerente, Mateo")
@@ -19,7 +30,7 @@ def main():
     if option == "Agregar Empleado":
         st.subheader("Opcion: Agregar Empleado")
         nombre_empleado = st.text_input("Nombre Completo del Empleado: ")
-        nivel = st.text_input("Nivel de acceso")
+        nivel = st.selectbox("Nivel de Acceso", ["Acceso Bajo", "Acceso Medio","Acceso Alto"])
         correo = st.text_input("Correo de acceso")
         if st.button("Agregar"):
             nombre_empleado = nombre_empleado.split(" ")
@@ -44,6 +55,8 @@ def main():
                 username = f"{username}{i}"
                 i += 1
                 result = select_user(connection, username)
+            
+            nivel=definir_nivel(nivel)
 
             create_user(connection, username, key, nivel, correo, contrasena, clave)
             st.success("Usuario creado exitosamente" + f" Usuario: {username}")

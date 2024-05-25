@@ -32,8 +32,10 @@ def run(archivo):
         st.error(f'Error al ejecutar la página {archivo}.')
         st.error(stderr.decode())
 connection = create_connection()
+
 if __name__ == '__main__':
     main()
+
 thread = threading.Thread(target=actualizar_contrasenas_periodicamente(connection))
 thread.daemon = True
 thread.start()

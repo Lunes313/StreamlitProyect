@@ -43,7 +43,7 @@ def get_user(connection, username):
 def create_user(connection, username, key, level, correo, contrasena, clave):
     cursor = connection.cursor()
     now = datetime.now()
-    sql = "INSERT INTO usuarios (username, keey, level, correo, password, clave) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    sql = "INSERT INTO usuarios (username, keey, level, correo, password, clave) VALUES (%s, %s, %s, %s, %s, %s)"
     val = (username, key, level, correo, contrasena, clave)
     cursor.execute(sql, val)
     connection.commit()
@@ -79,6 +79,7 @@ def descifrar_contrasena(key, contrasenaC):
     cifrado = Fernet(key)
     contrasenaDesC = cifrado.decrypt(contrasenaC).decode()
     return contrasenaDesC
+
 
 def actualizar_contrasenas_periodicamente(connection):
     while True:

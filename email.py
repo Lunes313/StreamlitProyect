@@ -20,7 +20,6 @@ if "username" in url_params:
     username = url_params["username"]
     st.write("¡Bienvenido, {}!".format(username))
     username=format(username)
-    st.write(username)
 else:
     st.error("No se encontró el parámetro 'username' en la URL")
 

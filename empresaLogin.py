@@ -3,6 +3,7 @@ import mysql.connector
 from database import create_connection
 import random
 import socket
+import subprocess
 
 def get_network_name():
     try:
@@ -56,6 +57,17 @@ def update_mensaje(connection, username, codigo):
     cursor.execute(sql, val)
     connection.commit()
 
+def revisar_IPS(connection, ip):
+    cursor = connection.cursor()
+    sql = "select * from ips where ip=%s"
+    val = (ip,)
+    cursor.execute(sql, val)
+    result = cursor.fetchall()
+    if result:
+        return True
+    else:
+        return False
+
 # Inicializar el estado de la sesión
 if "resultado" not in st.session_state:
     st.session_state.resultado = None
@@ -90,26 +102,37 @@ if st.button("Ingresar"):
         resultado = find_user(connection, st.session_state.username, st.session_state.key)
     if resultado:
         st.session_state.resultado = resultado
-        st.success(resultado)
-        if resultado[0][5] == 0:
+        if resultado[0][4] == 0:
             st.success("Nivel de acceso bajo")
-        elif resultado[0][5] == 1:
+        elif resultado[0][4] == 1:
             st.success("Nivel de acceso medio")
-            username_email = resultado[0][6]
+            username_email = resultado[0][5]
             update_mensaje(connection, username_email, st.session_state.codigo)
-        elif resultado[0][5] == 2:
+        elif resultado[0][4] == 3:
             st.success("Nivel de acceso alto")
-            
+            username_email = resultado[0][5]
+            update_mensaje(connection, username_email, st.session_state.codigo)
+            ip=get_network_name()
+            result=revisar_IPS(connection,ip)
+            if result ==True:
+                st.success("La IP coincide")
+            else:
+                st.error("La IP no coincide")    
     else:
         st.error("Usuario o clave incorrecta")
 
 # Verificación del código después de ingresar
 if st.session_state.resultado:
-    if st.session_state.resultado[0][5] == 1:
         codigo_email = st.text_input("Ingresa el codigo enviado a tu email")
         if st.button("Verificar"):
             if codigo_email == str(st.session_state.codigo):
                 st.success("Código Correcto")
+                if st.session_state.resultado[0][4]==1:
+                    process = subprocess.Popen(['streamlit', 'run', 'informaciom.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    stdout, stderr = process.communicate()
+                elif st.session_state.resultado[0][4] ==3:
+                    process = subprocess.Popen(['streamlit', 'run', 'administador.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    stdout, stderr = process.communicate()
             else:
                 st.error("Código incorrecto")
 

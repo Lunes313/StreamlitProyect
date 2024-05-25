@@ -11,8 +11,7 @@ def main():
         "Login Email": "loginEmail.py",
         "Empresa Login": "empresaLogin.py",
         "Gerente": "gerente.py",
-        "ad":"administador.py"
-        
+
     }
 
     seleccion = st.selectbox("Selecciona una página", [""] + list(paginas.keys()))

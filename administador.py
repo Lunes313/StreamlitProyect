@@ -51,7 +51,7 @@ def main():
     elif option == "Consultar Empleado":
         st.subheader("Consulta de empleados")
         result = select_users(connection)
-        df = pd.DataFrame(result, columns=["username","password", "clave", "keey", "level", "correo", "actualizacion"])
+        df = pd.DataFrame(result, columns=["username","password", "clave", "keey", "level", "correo"])
         col1, col2, col3, col4, col5, col6 = st.columns(6)
         col1.write("**Usuario**")
         col2.write("**Key**")

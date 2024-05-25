@@ -2,7 +2,7 @@ import streamlit as st
 import subprocess
 import threading
 import mysql.connector
-from database import actualizar_contrasenas_periodicamente
+from database import actualizar_contrasenas_periodicamente, create_connection
 def main():
     st.title("Menú de Navegación")
 
@@ -31,9 +31,9 @@ def run(archivo):
     else:
         st.error(f'Error al ejecutar la página {archivo}.')
         st.error(stderr.decode())
-
+connection = create_connection()
 if __name__ == '__main__':
     main()
-    thread = threading.Thread(target=actualizar_contrasenas_periodicamente)
-    thread.daemon = True
-    thread.start()
+thread = threading.Thread(target=actualizar_contrasenas_periodicamente(connection))
+thread.daemon = True
+thread.start()

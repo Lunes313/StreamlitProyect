@@ -66,7 +66,7 @@ if "username" not in st.session_state:
 if "key" not in st.session_state:
     st.session_state.key = None
 
-st.title("Inciar Sesion")
+st.title("Iniciar Sesion")
 nombre_empleado = st.text_input("Ingresa tu Nombre Completo")
 key = st.text_input("Ingresa tu key")
 if st.button("Ingresar"):
@@ -99,6 +99,7 @@ if st.button("Ingresar"):
             update_mensaje(connection, username_email, st.session_state.codigo)
         elif resultado[0][5] == 2:
             st.success("Nivel de acceso alto")
+            
     else:
         st.error("Usuario o clave incorrecta")
 

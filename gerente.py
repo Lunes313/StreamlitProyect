@@ -1,106 +1,90 @@
 import streamlit as st
 import pandas as pd
-from database import create_connection, select_user, create_user, select_users
-import random
-import string
-from cryptography.fernet import Fernet
+from database import create_connection
+import socket
 
+def get_network_name():
+    try:
+        hostname = socket.gethostname()
+        network_name = socket.gethostbyname(hostname)
+        return network_name
+    except socket.error as e:
+        print(f"Error al obtener el nombre de la red: {e}")
+        return None
 
-def generar_contrasena():
-    caracteres = string.ascii_letters + string.digits + string.punctuation
-    contrasena = []
-    for i in range(25):
-        contrasena.append(random.choice(caracteres))
-    return ''.join(contrasena)
+network_name = get_network_name()
+if not network_name:
+    st.write("No se pudo obtener el nombre de la red.")
+    
 
-
-def cifrar_contrasena(contrasena):
-    key = Fernet.generate_key()
-    cifrador = Fernet(key)
-    contrasena_cifrada = cifrador.encrypt(contrasena.encode())
-    return key, contrasena_cifrada
-
-
-def descifrar_contrasena(key, contrasenaC):
-    cifrado = Fernet(key)
-    contrasenaDesC = cifrado.decrypt(contrasenaC).decode()
-    return contrasenaDesC
-
-
-def eliminar_usuario(connection, username):
+def created_IPS(connection, network_name):
     cursor = connection.cursor()
-    sql = "DELETE FROM usuarios WHERE username = %s"
-    val = (username,)
+    sql = "INSERT INTO ips (ip) VALUES (%s)"
+    val = (network_name,)
+    cursor.execute(sql, val)
+    connection.commit()
+    
+
+def select_IPS(connection):
+    cursor = connection.cursor()
+    sql = "SELECT * FROM ips"
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    return result
+
+def eliminar_usuario(connection, ip):
+    cursor = connection.cursor()
+    sql = "DELETE FROM ips WHERE IP = %s"
+    val = (ip,)
     cursor.execute(sql, val)
     connection.commit()
 
+def select_IP(connection, ip):
+    cursor = connection.cursor()
+    sql = "SELECT * FROM ips WHERE ip = %s"
+    val = (ip,)
+    cursor.execute(sql, val)
+    result = cursor.fetchall()
+    return result
+
 
 def main():
-    connection = create_connection()
-    st.title("Bienvenido Gerente, Mateo")
-    st.sidebar.title("Menu")
-    option = st.sidebar.selectbox("Seleccionar Proceso", ["Agregar Empleado", "Consultar Empleado"])
+   connection = create_connection()
+   st.title("Hola Gerente,Mateo")
+   col1,col3=st.columns(2)
 
-    if option == "Agregar Empleado":
-        st.subheader("Opcion: Agregar Empleado")
-        nombre_empleado = st.text_input("Nombre Completo del Empleado: ")
-        nivel = st.text_input("Nivel de acceso")
-        correo = st.text_input("Correo de acceso")
-        if st.button("Agregar"):
-            nombre_empleado = nombre_empleado.split(" ")
-            if len(nombre_empleado) >= 4:
-                username = nombre_empleado[0][0] + nombre_empleado[1][0] + nombre_empleado[2][
-                                                                           0:len(nombre_empleado[1]) - 2] + \
-                           nombre_empleado[3][0]
-            elif len(nombre_empleado) == 3:
-                username = nombre_empleado[0][0] + nombre_empleado[1][0:len(nombre_empleado[1]) - 1] + \
-                           nombre_empleado[2][0]
-            else:
-                st.danger("Nombre de empleado no valido")
-
-            key = random.randint(1000000, 99999999)
-            username = username.lower()
-            clave, contrasena = cifrar_contrasena(generar_contrasena())
-
-            result = select_user(connection, username)
-
-            i = 1
-            while result:
-                username = f"{username}{i}"
-                i += 1
-                result = select_user(connection, username)
-
-            create_user(connection, username, key, nivel, correo, contrasena, clave)
-            st.success("Usuario creado exitosamente" + f" Usuario: {username}")
-
-    elif option == "Consultar Empleado":
-        st.subheader("Consulta de empleados")
-        result = select_users(connection)
-        df = pd.DataFrame(result, columns=["username","password", "clave", "keey", "ip", "level", "correo"])
-        col1, col2, col3, col4, col5, col6 = st.columns(6)
-        col1.write("**Usuario**")
-        col2.write("**Key**")
-        col3.write("**Contraseña**")
-        col4.write("**Correo**")
-        col5.write("**Nivel**")
-        col6.write("**Eliminar**")
-        def render_row(row):
-            col1, col2, col3, col4, col5, col6 = st.columns(6)
-            col1.write(row["username"])
-            col2.write(row["keey"])
-            try:
-                col3.write(descifrar_contrasena(row["clave"], row["password"]))
-            except Exception as e:
-                col3.write(f"Error: {e}")
-            col4.write(row["correo"])
-            col5.write(row["level"])
-            if col6.button("Eliminar", key=f"del_{row['username']}"):
-                eliminar_usuario(connection, row["username"])
+   with col1:
+       st.sidebar.title("Tablas De IPS")
+       result=select_IPS(connection)
+       df = pd.DataFrame(result, columns=["IP"])
+       col1, col2= st.columns(2)
+       col1.write("**IP**")
+       col2.write("**Eliminar**")
+       def render_row(row):
+            col1, col2= st.columns(2)
+            col1.write(row["IP"])
+            
+            if col2.button("Eliminar", key=f"del_{row['IP']}"):
+                eliminar_usuario(connection, row["IP"])
                 st.experimental_rerun()
+       df.apply(render_row, axis=1)
 
-        df.apply(render_row, axis=1)
+   with col3:
+       ips=get_network_name()
+       st.write("La IP que se tome de tu dispositivo es: "+ips)
+    
+       if st.button("Agregar"):
+           result=select_IP(connection,ips)
+           if result:
+               st.error("La IP ya se encuentra registrada")
+           else:
+               st.write(created_IPS(connection,ips))
+               st.success("La IP se ha agregado exitosamente")
+ 
 
-        st.success("Consulta completada exitosamente")
+       
+       
+
 
 
 if __name__ == '__main__':

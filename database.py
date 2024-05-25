@@ -90,6 +90,5 @@ def actualizar_contrasenas_periodicamente(connection):
                 nueva_contrasena = generar_contrasena()
                 key, contrasena_cifrada = cifrar_contrasena(nueva_contrasena)
                 update_password(connection, username, contrasena_cifrada, key)
-                print(f"Contraseña para {username} ha sido actualizada.")
         time.sleep(60)
 

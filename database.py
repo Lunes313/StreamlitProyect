@@ -29,11 +29,12 @@ def select_user(connection,username):
         return True
     else:
         return False
+
     
-def create_user(connection, username, key, level, correo, contrasena):
+def create_user(connection, username, key, level, correo, contrasena, clave):
     cursor = connection.cursor()
-    sql = "INSERT INTO usuarios (username, keey, level, correo, password) VALUES (%s, %s, %s, %s, %s)"
-    val = (username, key, level, correo, contrasena)
+    sql = "INSERT INTO usuarios (username, keey, level, correo, password, clave) VALUES (%s, %s, %s, %s, %s, %s)"
+    val = (username, key, level, correo, contrasena, clave)
     cursor.execute(sql, val)
     connection.commit()
 

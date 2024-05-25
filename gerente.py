@@ -56,42 +56,45 @@ def main():
                 username = nombre_empleado[0][0] + nombre_empleado[1][0:len(nombre_empleado[1]) - 1] + \
                            nombre_empleado[2][0]
             else:
-                username = nombre_empleado[0][0] + nombre_empleado[1][0]
+                st.danger("Nombre de empleado no valido")
 
-            key = random.randint(1000, 9999)
+            key = random.randint(1000000, 99999999)
             username = username.lower()
-            contrasena = generar_contrasena()
+            clave, contrasena = cifrar_contrasena(generar_contrasena())
 
             result = select_user(connection, username)
 
             i = 1
             while result:
-                st.warning("El usuario ya existe")
-                username = username + str(i)
+                username = f"{username}{i}"
                 i += 1
                 result = select_user(connection, username)
 
-            create_user(connection, username, key, nivel, correo, contrasena)
-            st.success("Usuario creado exitosamente")
+            create_user(connection, username, key, nivel, correo, contrasena, clave)
+            st.success("Usuario creado exitosamente" + f" Usuario: {username}")
 
     elif option == "Consultar Empleado":
         st.subheader("Consulta de empleados")
         result = select_users(connection)
-        df = pd.DataFrame(result, columns=["username", "password", "keey", "ip", "level", "correo"])
-        df = df[["username", "keey", "level", "correo"]]
-        col1, col2, col3, col4, col5 = st.columns(5)
+        df = pd.DataFrame(result, columns=["username","password", "clave", "keey", "ip", "level", "correo"])
+        col1, col2, col3, col4, col5, col6 = st.columns(6)
         col1.write("**Usuario**")
         col2.write("**Key**")
-        col3.write("**Nivel**")
+        col3.write("**Contraseña**")
         col4.write("**Correo**")
-        col5.write("**Eliminar**")
+        col5.write("**Nivel**")
+        col6.write("**Eliminar**")
         def render_row(row):
-            col1, col2, col3, col4, col5 = st.columns(5)
+            col1, col2, col3, col4, col5, col6 = st.columns(6)
             col1.write(row["username"])
             col2.write(row["keey"])
-            col3.write(row["level"])
+            try:
+                col3.write(descifrar_contrasena(row["clave"], row["password"]))
+            except Exception as e:
+                col3.write(f"Error: {e}")
             col4.write(row["correo"])
-            if col5.button("Eliminar", key=f"del_{row['username']}"):
+            col5.write(row["level"])
+            if col6.button("Eliminar", key=f"del_{row['username']}"):
                 eliminar_usuario(connection, row["username"])
                 st.experimental_rerun()
 

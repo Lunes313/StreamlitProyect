@@ -19,10 +19,29 @@ if network_name:
 else:
     st.write("No se pudo obtener el nombre de la red.")
 
-def select_user(connection, username, key):
+
+def find_user(connection, username, key):
     cursor = connection.cursor()
     sql = "select * from usuarios where username=%s and keey=%s"
     val = (username, key)
+    cursor.execute(sql, val)
+    result = cursor.fetchall()
+    if result:
+        return result
+    else:
+        i = 1
+        while i <= 5:
+            username = f"{username}{i}"
+            result = select_user(connection, username, key)
+            if result:
+                return result
+            i += 1
+        return False
+
+def select_user(connection, username, key):
+    cursor = connection.cursor()
+    sql = "select * from usuarios where username=%s and keey=%s"
+    val = (username,key)
     cursor.execute(sql, val)
     result = cursor.fetchall()
     if result:
@@ -53,35 +72,39 @@ key = st.text_input("Ingresa tu key")
 if st.button("Ingresar"):
     nombre_empleado_split = nombre_empleado.split(" ")
     if len(nombre_empleado_split) >= 4:
-        username = nombre_empleado_split[0][0] + nombre_empleado_split[1][0] + nombre_empleado_split[2][0:len(nombre_empleado_split[1])-2] + nombre_empleado_split[3][0]
+        username = nombre_empleado_split[0][0] + nombre_empleado_split[1][0] + nombre_empleado_split[2][
+                                                                   0:len(nombre_empleado_split[1]) - 2] + \
+                   nombre_empleado_split[3][0]
+    elif len(nombre_empleado_split) == 3:
+        username = nombre_empleado_split[0][0] + nombre_empleado_split[1][0:len(nombre_empleado_split[1]) - 1] + \
+                   nombre_empleado_split[2][0]
     else:
-        username = nombre_empleado_split[0][0] + nombre_empleado_split[1][0:len(nombre_empleado_split[1])-1] + nombre_empleado_split[2][0]
+        st.danger("Nombre de empleado no valido")
 
-    st.session_state.codigo = random.randint(1000, 9999)
+    st.session_state.codigo = random.randint(10000, 99999)
     st.session_state.username = username.lower()
     st.session_state.key = key
-    st.write(st.session_state.username)
 
     connection = create_connection()
     if connection:
-        resultado = select_user(connection, st.session_state.username, st.session_state.key)
-        if resultado:
-            st.session_state.resultado = resultado
-            st.success(resultado)
-            if resultado[0][4] == 0:
-                st.success("Nivel de acceso bajo")
-            elif resultado[0][4] == 1:
-                st.success("Nivel de acceso medio")
-                username_email = resultado[0][5]
-                update_mensaje(connection, username_email, st.session_state.codigo)
-            elif resultado[0][4] == 2:
-                st.success("Nivel de acceso alto")
-        else:
-            st.error("Usuario o clave incorrecta")
+        resultado = find_user(connection, st.session_state.username, st.session_state.key)
+    if resultado:
+        st.session_state.resultado = resultado
+        st.success(resultado)
+        if resultado[0][5] == 0:
+            st.success("Nivel de acceso bajo")
+        elif resultado[0][5] == 1:
+            st.success("Nivel de acceso medio")
+            username_email = resultado[0][6]
+            update_mensaje(connection, username_email, st.session_state.codigo)
+        elif resultado[0][5] == 2:
+            st.success("Nivel de acceso alto")
+    else:
+        st.error("Usuario o clave incorrecta")
 
 # Verificación del código después de ingresar
 if st.session_state.resultado:
-    if st.session_state.resultado[0][4] == 1:
+    if st.session_state.resultado[0][5] == 1:
         codigo_email = st.text_input("Ingresa el codigo enviado a tu email")
         if st.button("Verificar"):
             if codigo_email == str(st.session_state.codigo):

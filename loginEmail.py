@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 import mysql.connector
 from database import create_connection, close_connection
 
@@ -18,8 +17,6 @@ def create_user(connection,username, password):
     val=(username,password,)
     cursor.execute(sql,val)
     connection.commit()
-
-
 col1, col2 = st.columns(2)
 
 with col1:
@@ -35,8 +32,6 @@ with col1:
             st.markdown("[Ir a la página de bienvenida](%s)" % url, unsafe_allow_html=True)
         else:
             st.error("¡Usuario o contraseña incorrectos!")
-    
-    
 
 with col2:
     st.title("Regístrate")

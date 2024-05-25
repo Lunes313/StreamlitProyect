@@ -1,31 +1,7 @@
 import streamlit as st
 import pandas as pd
-from database import create_connection, select_user, create_user, select_users
+from database import create_connection, select_user, create_user, select_users, generar_contrasena, cifrar_contrasena, descifrar_contrasena
 import random
-import string
-from cryptography.fernet import Fernet
-
-
-def generar_contrasena():
-    caracteres = string.ascii_letters + string.digits + string.punctuation
-    contrasena = []
-    for i in range(25):
-        contrasena.append(random.choice(caracteres))
-    return ''.join(contrasena)
-
-
-def cifrar_contrasena(contrasena):
-    key = Fernet.generate_key()
-    cifrador = Fernet(key)
-    contrasena_cifrada = cifrador.encrypt(contrasena.encode())
-    return key, contrasena_cifrada
-
-
-def descifrar_contrasena(key, contrasenaC):
-    cifrado = Fernet(key)
-    contrasenaDesC = cifrado.decrypt(contrasenaC).decode()
-    return contrasenaDesC
-
 
 def eliminar_usuario(connection, username):
     cursor = connection.cursor()
@@ -33,7 +9,6 @@ def eliminar_usuario(connection, username):
     val = (username,)
     cursor.execute(sql, val)
     connection.commit()
-
 
 def main():
     connection = create_connection()
@@ -56,7 +31,7 @@ def main():
                 username = nombre_empleado[0][0] + nombre_empleado[1][0:len(nombre_empleado[1]) - 1] + \
                            nombre_empleado[2][0]
             else:
-                st.danger("Nombre de empleado no valido")
+                st.error("Nombre de empleado no valido")
 
             key = random.randint(1000000, 99999999)
             username = username.lower()
@@ -76,7 +51,7 @@ def main():
     elif option == "Consultar Empleado":
         st.subheader("Consulta de empleados")
         result = select_users(connection)
-        df = pd.DataFrame(result, columns=["username","password", "clave", "keey", "level", "correo"])
+        df = pd.DataFrame(result, columns=["username","password", "clave", "keey", "level", "correo", "actualizacion"])
         col1, col2, col3, col4, col5, col6 = st.columns(6)
         col1.write("**Usuario**")
         col2.write("**Key**")
@@ -101,8 +76,6 @@ def main():
         df.apply(render_row, axis=1)
 
         st.success("Consulta completada exitosamente")
-    
-
 
 
 if __name__ == '__main__':

@@ -47,7 +47,6 @@ def select_IP(connection, ip):
     result = cursor.fetchall()
     return result
 
-
 def main():
     connection = create_connection()
     st.title("Hola Gerente,Mateo")

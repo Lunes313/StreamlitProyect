@@ -1,5 +1,8 @@
 import streamlit as st
 import subprocess
+import threading
+import mysql.connector
+from database import actualizar_contrasenas_periodicamente
 def main():
     st.title("Menú de Navegación")
 
@@ -7,7 +10,8 @@ def main():
     paginas = {
         "Login Email": "loginEmail.py",
         "Empresa Login": "empresaLogin.py",
-        "Gerente": "gerente.py"
+        "Gerente": "gerente.py",
+        "ad":"administador.py"
         
     }
 
@@ -30,3 +34,6 @@ def run(archivo):
 
 if __name__ == '__main__':
     main()
+    thread = threading.Thread(target=actualizar_contrasenas_periodicamente)
+    thread.daemon = True
+    thread.start()

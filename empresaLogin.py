@@ -91,7 +91,7 @@ if st.button("Ingresar"):
         username = nombre_empleado_split[0][0] + nombre_empleado_split[1][0:len(nombre_empleado_split[1]) - 1] + \
                    nombre_empleado_split[2][0]
     else:
-        st.danger("Nombre de empleado no valido")
+        st.error("Nombre de empleado no valido")
 
     st.session_state.codigo = random.randint(10000, 99999)
     st.session_state.username = username.lower()

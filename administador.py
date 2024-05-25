@@ -25,7 +25,7 @@ def main():
     connection = create_connection()
     st.title("Bienvenido Gerente, Mateo")
     st.sidebar.title("Menu")
-    option = st.sidebar.selectbox("Seleccionar Proceso", ["Agregar Empleado", "Consultar Empleado","Agregar IPS"])
+    option = st.sidebar.selectbox("Seleccionar Proceso", ["Agregar Empleado", "Consultar Empleado"])
 
     if option == "Agregar Empleado":
         st.subheader("Opcion: Agregar Empleado")

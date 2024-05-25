@@ -5,9 +5,10 @@ def main():
 
     # Menú desplegable para seleccionar la página
     paginas = {
-        "login Email": "loginEmail.py",
-        "empresa Login": "empresaLogin.py",
-        "gerente": "gerente.py"
+        "Login Email": "loginEmail.py",
+        "Empresa Login": "empresaLogin.py",
+        "Gerente": "gerente.py"
+        
     }
 
     seleccion = st.selectbox("Selecciona una página", [""] + list(paginas.keys()))

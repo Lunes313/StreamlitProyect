@@ -78,7 +78,6 @@ def descifrar_contrasena(key, contrasenaC):
     contrasenaDesC = cifrado.decrypt(contrasenaC).decode()
     return contrasenaDesC
 
-
 def actualizar_contrasenas_periodicamente(connection):
     while True:
         if connection:

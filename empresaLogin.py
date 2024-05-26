@@ -130,7 +130,7 @@ if st.session_state.resultado:
             if codigo_email == str(st.session_state.codigo):
                 st.success("Código Correcto")
                 if st.session_state.resultado[0][4]==1:
-                    process = subprocess.Popen(['streamlit', 'run', 'informaciom.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    process = subprocess.Popen(['streamlit', 'run', 'informacion.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     stdout, stderr = process.communicate()
                 elif st.session_state.resultado[0][4] ==3:
                     process = subprocess.Popen(['streamlit', 'run', 'administador.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)

@@ -97,4 +97,7 @@ def actualizar_contrasenas_periodicamente(connection):
                 keey = contrasena[10:16].decode('utf-8')
                 update_password(connection, username, contrasena, key, keey)
                 update_email_clave(connection, correo, keey)
-        time.sleep(30)
+                print(f"Contraseña actualizada para el usuario {username}")
+        print("Esperando 3 minutos...")
+        time.sleep(180)
+        print("3 minutos han pasado.")

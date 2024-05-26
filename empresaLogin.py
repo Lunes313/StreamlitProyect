@@ -57,12 +57,6 @@ def update_mensaje(connection, username, codigo):
     cursor.execute(sql, val)
     connection.commit()
 
-def update_clave(connection, username, clave):
-    cursor = connection.cursor()
-    sql = "update email set clave=%s where username=%s"
-    val = (clave, username)
-    cursor.execute(sql, val)
-    connection.commit()
 
 def revisar_IPS(connection, ip):
     cursor = connection.cursor()
@@ -82,8 +76,6 @@ if "codigo" not in st.session_state:
     st.session_state.codigo = None
 if "username" not in st.session_state:
     st.session_state.username = None
-if "clave" not in st.session_state:
-    st.session_state.clave = None
 if "key" not in st.session_state:
     st.session_state.key = None
 

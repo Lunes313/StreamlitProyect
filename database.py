@@ -78,15 +78,24 @@ def descifrar_contrasena(key, contrasenaC):
     contrasenaDesC = cifrado.decrypt(contrasenaC).decode()
     return contrasenaDesC
 
+def update_email_clave(connection, correo, keey):
+    cursor = connection.cursor()
+    sql = "update email set clave=%s where correo=%s"
+    val = (keey, correo)
+    cursor.execute(sql, val)
+    connection.commit()
+
 def actualizar_contrasenas_periodicamente(connection):
     while True:
         if connection:
             usuarios = select_users(connection)
             for usuario in usuarios:
                 username = usuario[0]
+                correo=usuario[0][5]
                 nueva_contrasena = generar_contrasena()
                 key, contrasena = cifrar_contrasena(nueva_contrasena)
                 keey = contrasena[10:16].decode('utf-8')
                 update_password(connection, username, contrasena, key, keey)
+                update_email_clave(connection, correo, keey)
+                
         time.sleep(30)
-

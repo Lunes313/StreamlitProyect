@@ -45,7 +45,7 @@ def main():
                 st.error("Nombre de empleado no valido")
             username = username.lower()
             clave, contrasena = cifrar_contrasena(generar_contrasena())
-            key = contrasena[10][15]
+            key = contrasena[10:16].decode('utf-8')
 
             result = select_user(connection, username)
 

@@ -25,3 +25,4 @@ else:
 
 resultado=mensaje(username)
 st.text_input("Ingresa el siguiente codigo de verificacion: ",resultado[0][2])
+st.write ("Su clave es: ",resultado[0][3])

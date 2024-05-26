@@ -28,7 +28,7 @@ with col1:
         resultado = login(connection, name_login, password_login)
         if resultado:
             st.success("¡Bienvenido!")
-            url = "http://localhost:8506/?username={}".format(name_login)
+            url = "http://localhost:8505/?username={}".format(name_login)
             st.markdown("[Ir a la página de bienvenida](%s)" % url, unsafe_allow_html=True)
         else:
             st.error("¡Usuario o contraseña incorrectos!")

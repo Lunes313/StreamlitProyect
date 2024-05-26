@@ -3,7 +3,6 @@ from mysql.connector import Error
 import string
 import random
 from cryptography.fernet import Fernet
-from datetime import datetime, timedelta
 import time
 
 
@@ -42,7 +41,6 @@ def get_user(connection, username):
     return result
 def create_user(connection, username, key, level, correo, contrasena, clave):
     cursor = connection.cursor()
-    now = datetime.now()
     sql = "INSERT INTO usuarios (username, keey, level, correo, password, clave) VALUES (%s, %s, %s, %s, %s, %s)"
     val = (username, key, level, correo, contrasena, clave)
     cursor.execute(sql, val)
@@ -55,10 +53,10 @@ def select_users(connection):
     result=cursor.fetchall()
     return result
 
-def update_password(connection, username, password, key):
+def update_password(connection, username, password, key, keey):
     cursor = connection.cursor()
-    sql = "UPDATE usuarios SET password=%s, clave=%s WHERE username=%s"
-    val = (password, key, username)
+    sql = "UPDATE usuarios SET password=%s, clave=%s, keey=%s WHERE username=%s"
+    val = (password, key, keey, username,)
     cursor.execute(sql, val)
     connection.commit()
 
@@ -88,7 +86,8 @@ def actualizar_contrasenas_periodicamente(connection):
             for usuario in usuarios:
                 username = usuario[0]
                 nueva_contrasena = generar_contrasena()
-                key, contrasena_cifrada = cifrar_contrasena(nueva_contrasena)
-                update_password(connection, username, contrasena_cifrada, key)
-        time.sleep(60)
+                key, contrasena = cifrar_contrasena(nueva_contrasena)
+                keey = contrasena[10:16].decode('utf-8')
+                update_password(connection, username, contrasena, key, keey)
+        time.sleep(30)
 

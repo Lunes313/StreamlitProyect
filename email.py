@@ -18,10 +18,10 @@ def mensaje(username):
 url_params = st.query_params
 if "username" in url_params:
     username = url_params["username"]
-    st.write("¡Bienvenido, {}!".format(username))
+    st.title("¡Bienvenido, {}!".format(username))
     username=format(username)
 else:
     st.error("No se encontró el parámetro 'username' en la URL")
 
 resultado=mensaje(username)
-st.write("Ingresa el siguiente codigo de verificacion: ",resultado[0][2])
+st.text_input("Ingresa el siguiente codigo de verificacion: ",resultado[0][2])

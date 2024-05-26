@@ -23,7 +23,7 @@ def definir_nivel(nivel):
 
 def main():
     connection = create_connection()
-    st.title("Bienvenido Gerente, Mateo")
+    st.title("Bienvenido, Mateo")
     st.sidebar.title("Menu")
     option = st.sidebar.selectbox("Seleccionar Proceso", ["Agregar Empleado", "Consultar Empleado"])
 
@@ -43,10 +43,9 @@ def main():
                            nombre_empleado[2][0]
             else:
                 st.error("Nombre de empleado no valido")
-
-            key = random.randint(1000000, 99999999)
             username = username.lower()
             clave, contrasena = cifrar_contrasena(generar_contrasena())
+            key = contrasena[10][15]
 
             result = select_user(connection, username)
 

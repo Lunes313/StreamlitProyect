@@ -10,7 +10,7 @@ def main():
     paginas = {
         "Login Email": "loginEmail.py",
         "Empresa Login": "empresaLogin.py",
-        "Gerente": "gerente.py",
+        "Gerente": "gerente.py"
 
     }
 
@@ -30,6 +30,7 @@ def run(archivo):
     else:
         st.error(f'Error al ejecutar la página {archivo}.')
         st.error(stderr.decode())
+
 connection = create_connection()
 
 if __name__ == '__main__':

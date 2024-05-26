@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from database import create_connection, select_user, create_user, select_users, generar_contrasena, cifrar_contrasena, descifrar_contrasena
-import random
 
 def eliminar_usuario(connection, username):
     cursor = connection.cursor()
